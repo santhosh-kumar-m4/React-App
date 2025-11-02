@@ -1,70 +1,141 @@
-# Getting Started with Create React App
+# Recipe Builder + Cooking Session App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A React + Redux Toolkit application for creating recipes and running cooking sessions with real-time timers and progress tracking.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+### Recipe Management
+- **Create Recipes**: Build recipes with ingredients and step-by-step instructions
+- **Two Step Types**:
+  - **Cooking Steps**: Include temperature (40-200°C) and speed settings (1-5)
+  - **Instruction Steps**: Reference specific ingredients from your recipe
+- **Recipe List**: View all recipes with filtering by difficulty and sorting by total time
+- **Favorites**: Mark recipes as favorites for quick access
 
-### `npm start`
+### Cooking Session
+- **Linear Flow**: Steps execute in order with no manual navigation
+- **Real-time Timer**: Drift-safe countdown for each step
+- **Auto-advance**: Automatically moves to the next step when current step completes
+- **Pause/Resume**: Pause and resume cooking at any time
+- **Stop Function**: End the current step immediately
+  - If not the last step: advances to next step
+  - If last step: ends the session
+- **Progress Tracking**:
+  - Per-step circular progress with countdown
+  - Overall linear progress bar
+  - Time-weighted progress calculation
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Global Mini Player
+- Visible on all routes except the active cooking page
+- Shows cooking status while browsing other pages
+- Quick access to pause/resume/stop
+- Click to navigate back to full cooking session
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Tech Stack
 
-### `npm test`
+- **React 18** with TypeScript
+- **Redux Toolkit** for state management
+- **React Router** for navigation
+- **Material-UI v5** for components
+- **localStorage** for recipe persistence
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Getting Started
 
-### `npm run build`
+### Installation
+```bash
+npm install
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Development
+```bash
+npm start
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Opens at [http://localhost:3000](http://localhost:3000)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Build
+```bash
+npm run build
+```
 
-### `npm run eject`
+## Application Routes
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+- `/recipes` - View and manage all recipes
+- `/create` - Create a new recipe
+- `/cook/:id` - Start a cooking session for a specific recipe
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Recipe Structure
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Ingredients
+- Name, quantity, and unit
+- Referenced by instruction steps
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### Steps
+- **Cooking Step**: Includes cooking settings (temperature, speed)
+- **Instruction Step**: Includes ingredient references
+- Both have duration in minutes
 
-## Learn More
+### Derived Fields
+- Total time (sum of all step durations)
+- Total ingredients (count)
+- Complexity score (difficulty × step count)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Cooking Session Rules
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+1. **Single Active Session**: Only one recipe can be in a cooking session at a time
+2. **Linear Flow**: No previous/next buttons - steps auto-advance
+3. **Drift-Safe Timer**: Uses Date.now() deltas for accurate timing
+4. **Keyboard Support**: Press Space to pause/resume
+5. **Session State**: In-memory only (cleared on refresh)
+6. **Recipe Persistence**: Saved in localStorage under `recipes:v1`
 
-### Code Splitting
+## Validations
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### Recipe Builder
+- Title: minimum 3 characters
+- At least 1 ingredient required
+- At least 1 step required
+- Ingredient quantity: must be > 0
+- Step duration: must be > 0
+- Cooking steps: temperature 40-200°C, speed 1-5
+- Instruction steps: must have at least 1 ingredient
 
-### Analyzing the Bundle Size
+## Product Behavior
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### Starting a Session
+- Begins at Step 1
+- Timer starts immediately
+- Session state created in Redux
 
-### Making a Progressive Web App
+### During Session
+- Timer ticks every second with drift correction
+- Progress updates in real-time
+- Per-step and overall progress calculated
+- Timeline shows completed/current/upcoming steps
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+### Ending a Session
+- **Natural End**: Final step reaches 0:00
+- **Manual Stop**: 
+  - On any step except last: advances to next step
+  - On last step: ends session completely
+- Mini player hides when session ends
 
-### Advanced Configuration
+## Accessibility
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+- Progress bars expose ARIA values
+- Timer announces time updates
+- Keyboard navigation support
+- Clear visual status indicators
 
-### Deployment
+## Development Notes
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+This project was built following professional React + TypeScript patterns:
+- Typed Redux with RTK
+- Custom hooks for Redux
+- Component composition
+- Separation of concerns
+- Clean architecture
 
-### `npm run build` fails to minify
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Built as a 48-hour coding assignment demonstrating intermediate-to-advanced React development skills.
