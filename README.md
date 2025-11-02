@@ -137,5 +137,3 @@ This project was built following professional React + TypeScript patterns:
 - Clean architecture
 
 ---
-
-Built as a 48-hour coding assignment demonstrating intermediate-to-advanced React development skills.
