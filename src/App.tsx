@@ -85,7 +85,7 @@ const App: React.FC = () => {
     <Provider store={store}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <BrowserRouter>
+        <BrowserRouter basename="/React-App">
           <AppContent />
         </BrowserRouter>
       </ThemeProvider>
